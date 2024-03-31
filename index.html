@@ -100,6 +100,21 @@
             margin-right: 5px;
         }
 
+        .preview-btn {
+            display: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            background-color: #0099ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .preview-btn:hover {
+            background-color: #0077cc;
+        }
+
         .site-info {
             text-align: center;
             margin-top: 20px;
@@ -134,6 +149,7 @@
             </select>
             <button type="submit">Gerar Banner</button>
             <button id="removeWatermarkBtn">Remover Marca d'água</button>
+            <button id="previewBtn" class="preview-btn">Visualizar</button>
         </form>
         <div class="banner" id="banner">
         </div>
@@ -149,6 +165,18 @@
             if (confirm("Você tem certeza que deseja remover a marca d'água? É gratuito, mas deixando você ajuda a divulgar meu trabalho. Se for retirar, por favor, compartilhe com um amigo.")) {
                 removeWatermark();
             }
+        });
+
+        document.getElementById("previewBtn").addEventListener("click", function() {
+            const bannerImg = document.createElement('img');
+            bannerImg.src = document.getElementById("banner").querySelector("img").src;
+            const win = window.open("");
+            win.document.write('<div style="text-align: center;">');
+            win.document.write('<h1>Preview</h1>');
+            win.document.write('<p>Clique na imagem para fechar</p>');
+            win.document.write('<img src="' + bannerImg.src + '" onclick="window.close();" style="max-width: 100%; max-height: 100vh; cursor: pointer;">');
+            win.document.write('</div>');
+            win.document.close();
         });
 
         function generateBanner() {
@@ -209,6 +237,8 @@
 
                 bannerLink.appendChild(githubImg);
                 bannerDiv.appendChild(bannerLink);
+
+                document.getElementById("previewBtn").style.display = "block";
             };
             watermarkImg.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c2/GitHub_Invertocat_Logo.svg';
         }
@@ -252,6 +282,8 @@
             const bannerDiv = document.getElementById("banner");
             bannerDiv.innerHTML = '';
             bannerDiv.appendChild(bannerImg);
+
+            document.getElementById("previewBtn").style.display = "block";
         }
     </script>
     <div class="site-info">
@@ -259,3 +291,5 @@
     </div>
 </body>
 </html>
+
+
