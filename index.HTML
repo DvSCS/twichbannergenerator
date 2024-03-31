@@ -1,3 +1,5 @@
+</body>
+</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,6 +75,7 @@
 
         .banner {
             margin-top: 20px;
+            position: relative;
             text-align: center;
         }
 
@@ -84,11 +87,19 @@
         }
 
         .banner a {
-            display: block;
-            margin-top: 10px;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: inline-flex;
+            align-items: center;
             text-decoration: none;
             color: #4CAF50;
             font-weight: bold;
+        }
+
+        .banner a img {
+            width: 20px;
+            margin-right: 5px;
         }
     </style>
 </head>
@@ -117,6 +128,7 @@
                 <option value="pattern">Padrão</option>
             </select>
             <button type="submit">Gerar Banner</button>
+            <button id="removeWatermarkBtn">Remover Marca d'água</button>
         </form>
         <div class="banner" id="banner">
         </div>
@@ -126,6 +138,12 @@
         document.getElementById("bannerForm").addEventListener("submit", function(event) {
             event.preventDefault();
             generateBanner();
+        });
+
+        document.getElementById("removeWatermarkBtn").addEventListener("click", function() {
+            if (confirm("Você tem certeza que deseja remover a marca d'água? É gratuito, mas deixando você ajuda a divulgar meu trabalho. Se for retirar, por favor, compartilhe com um amigo.")) {
+                removeWatermark();
+            }
         });
 
         function generateBanner() {
@@ -164,6 +182,58 @@
             context.shadowOffsetX = 5;
             context.shadowOffsetY = 5;
             context.shadowBlur = 10;
+
+            const watermarkImg = new Image();
+            watermarkImg.onload = function() {
+                context.drawImage(watermarkImg, canvas.width - watermarkImg.width - 10, canvas.height - watermarkImg.height - 10);
+                const bannerDataUrl = canvas.toDataURL('image/png');
+                const bannerImg = document.createElement('img');
+                bannerImg.src = bannerDataUrl;
+
+                const bannerDiv = document.getElementById("banner");
+                bannerDiv.innerHTML = '';
+                bannerDiv.appendChild(bannerImg);
+
+                const downloadLink = document createElement('a');
+                downloadLink.href = bannerDataUrl;
+                downloadLink.download = 'twitch_banner.png';
+                downloadLink.innerText = 'Download Banner';
+                bannerDiv.appendChild(downloadLink);
+            };
+            watermarkImg.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c2/GitHub_Invertocat_Logo.svg';
+        }
+
+        function removeWatermark() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1200;
+            canvas.height = 480;
+            const context = canvas.getContext('2d');
+
+            const phrase = document.getElementById("phrase").value;
+            const font = document.getElementById("font").value;
+            const textColor = document.getElementById("textColor").value;
+            const backgroundColor = document.getElementById("backgroundColor").value;
+            const style = document.getElementById("style").value;
+            
+            if (style === "plain") {
+                context.fillStyle = backgroundColor;
+                context.fillRect(0, 0, canvas.width, canvas.height);
+            } else if (style === "gradient") {
+                const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+                gradient.addColorStop(0, backgroundColor);
+                gradient.addColorStop(1, textColor);
+                context.fillStyle = gradient;
+                context.fillRect(0, 0, canvas.width, canvas.height);
+            } else if (style === "pattern") {
+                const pattern = context.createPattern(document.getElementById("patternImg"), "repeat");
+                context.fillStyle = pattern;
+                context.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            context.fillStyle = textColor;
+            context.font = 'bold 50px ' + font;
+            context.textAlign = 'center';
+            context.fillText(phrase, canvas.width / 2, canvas.height / 2);
 
             const bannerDataUrl = canvas.toDataURL('image/png');
             const bannerImg = document.createElement('img');
