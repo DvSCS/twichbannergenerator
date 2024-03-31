@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitch Banner Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        select,
+        input[type="color"] {
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            appearance: none;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .banner {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .banner img {
+            display: block;
+            margin: 0 auto;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .banner a {
+            display: block;
+            margin-top: 10px;
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Twitch Banner Generator</h1>
+        <form id="bannerForm">
+            <label for="phrase">Digite a frase:</label>
+            <input type="text" id="phrase" name="phrase" required>
+            <label for="font">Escolha a fonte:</label>
+            <select id="font" name="font">
+                <option value="Arial">Arial</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Tahoma">Tahoma</option>
+                <option value="Georgia">Georgia</option>
+            </select>
+            <label for="textColor">Escolha a cor do texto:</label>
+            <input type="color" id="textColor" name="textColor" value="#ffffff">
+            <label for="backgroundColor">Escolha a cor de fundo:</label>
+            <input type="color" id="backgroundColor" name="backgroundColor" value="#0099ff">
+            <label for="style">Escolha um estilo de fundo:</label>
+            <select id="style" name="style">
+                <option value="plain">Plano</option>
+                <option value="gradient">Gradiente</option>
+                <option value="pattern">Padrão</option>
+            </select>
+            <button type="submit">Gerar Banner</button>
+        </form>
+        <div class="banner" id="banner">
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("bannerForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            generateBanner();
+        });
+
+        function generateBanner() {
+            const phrase = document.getElementById("phrase").value;
+            const font = document.getElementById("font").value;
+            const textColor = document.getElementById("textColor").value;
+            const backgroundColor = document.getElementById("backgroundColor").value;
+            const style = document.getElementById("style").value;
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = 1200;
+            canvas.height = 480;
+            const context = canvas.getContext('2d');
+
+            if (style === "plain") {
+                context.fillStyle = backgroundColor;
+                context.fillRect(0, 0, canvas.width, canvas.height);
+            } else if (style === "gradient") {
+                const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+                gradient.addColorStop(0, backgroundColor);
+                gradient.addColorStop(1, textColor);
+                context.fillStyle = gradient;
+                context.fillRect(0, 0, canvas.width, canvas.height);
+            } else if (style === "pattern") {
+                const pattern = context.createPattern(document.getElementById("patternImg"), "repeat");
+                context.fillStyle = pattern;
+                context.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            context.fillStyle = textColor;
+            context.font = 'bold 50px ' + font;
+            context.textAlign = 'center';
+            context.fillText(phrase, canvas.width / 2, canvas.height / 2);
+
+            context.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            context.shadowOffsetX = 5;
+            context.shadowOffsetY = 5;
+            context.shadowBlur = 10;
+
+            const bannerDataUrl = canvas.toDataURL('image/png');
+            const bannerImg = document.createElement('img');
+            bannerImg.src = bannerDataUrl;
+
+            const bannerDiv = document.getElementById("banner");
+            bannerDiv.innerHTML = '';
+            bannerDiv.appendChild(bannerImg);
+
+            const downloadLink = document.createElement('a');
+            downloadLink.href = bannerDataUrl;
+            downloadLink.download = 'twitch_banner.png';
+            downloadLink.innerText = 'Download Banner';
+            bannerDiv.appendChild(downloadLink);
+        }
+    </script>
+</body>
+</html>
