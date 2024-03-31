@@ -194,11 +194,21 @@
                 bannerDiv.innerHTML = '';
                 bannerDiv.appendChild(bannerImg);
 
-                const downloadLink = document.createElement('a');
-                downloadLink.href = bannerDataUrl;
-                downloadLink.download = 'twitch_banner.png';
-                downloadLink.innerText = 'Download Banner';
-                bannerDiv.appendChild(downloadLink);
+                const bannerLink = document.createElement('a');
+                bannerLink.href = 'https://dvscs.github.io/twichbannergenerator/';
+                bannerLink.target = '_blank';
+                bannerLink.title = 'Twitch Banner Generator';
+                bannerLink.style.position = 'absolute';
+                bannerLink.style.bottom = '10px';
+                bannerLink.style.right = '10px';
+
+                const githubImg = document.createElement('img');
+                githubImg.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c2/GitHub_Invertocat_Logo.svg';
+                githubImg.style.width = '20px';
+                githubImg.style.marginRight = '5px';
+
+                bannerLink.appendChild(githubImg);
+                bannerDiv.appendChild(bannerLink);
             };
             watermarkImg.src = 'https://upload.wikimedia.org/wikipedia/commons/c/c2/GitHub_Invertocat_Logo.svg';
         }
@@ -242,12 +252,6 @@
             const bannerDiv = document.getElementById("banner");
             bannerDiv.innerHTML = '';
             bannerDiv.appendChild(bannerImg);
-
-            const downloadLink = document.createElement('a');
-            downloadLink.href = bannerDataUrl;
-            downloadLink.download = 'twitch_banner.png';
-            downloadLink.innerText = 'Download Banner';
-            bannerDiv.appendChild(downloadLink);
         }
     </script>
     <div class="site-info">
